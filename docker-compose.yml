@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  twophase:
+    build: ./twophase
+    volumes:
+      - twophase:/app/twophase
+  backend:
+    build: ./backend
+    ports:
+      - 8000:8000
+    environment:
+      SOLVER_HOST: twophase
+      SEED: ${SEED}
+      SIGNER_KEY: "${SIGNER_KEY}"
+      BASE_URL: ${BASE_URL}
+  frontend:
+    build: ./frontend
+    ports:
+      - 3000:3000
+    environment:
+      TOKEN_ADDR: "${TOKEN_ADDR}"
+
+volumes:
+  twophase:
