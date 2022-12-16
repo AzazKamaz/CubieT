@@ -10,6 +10,7 @@ import CardActions from '@mui/material/CardActions';
 
 
 import { address, cubiet } from '../../web3api';
+import { retry } from '../../utils';
 
 
 function App() {
@@ -19,7 +20,7 @@ function App() {
 
     useEffect(() => {
         (async () => {
-            const data = await (await fetch('https://api.bdld.azazkamaz.me/mintlist')).json();
+            const data = await (await retry('https://api.bdld.azazkamaz.me/mintlist')).json();
             setMintlist(data);
 
             for (const [key, val] of Object.entries(data)) {
@@ -33,7 +34,7 @@ function App() {
                     }
                 });
 
-                fetch(val.link).then(res => res.json()).then(meta => setMetadata({ [key]: meta }));
+                retry(val.link).then(res => res.json()).then(meta => setMetadata({ [key]: meta }));
             }
         })();
     }, []);

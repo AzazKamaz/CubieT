@@ -15,6 +15,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 
 import { address, cubiet } from '../../web3api';
+import { retry } from '../../utils';
 
 
 function App() {
@@ -31,7 +32,7 @@ function App() {
             setList(data);
 
             for (const [key, val] of Object.entries(data)) {
-                fetch(val.tokenUri).then(res => res.json()).then(meta => setMetadata({ [key]: meta }));
+                retry(val.tokenUri).then(res => res.json()).then(meta => setMetadata({ [key]: meta }));
             }
         })();
     }, [refresh]);
