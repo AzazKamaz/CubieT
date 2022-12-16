@@ -1,6 +1,6 @@
 import { useEffect, useReducer, useState } from 'react';
 
-import Button from '@mui/material/Button';
+import Button from '@mui/lab/LoadingButton';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -23,6 +23,7 @@ function App() {
     const [list, setList] = useState({});
     const [metadata, setMetadata] = useReducer((state, patch) => ({ ...state, ...patch }), {});
     const [selected, setSelected] = useReducer((state, patch) => ({ ...state, ...patch }), { 'a': null, 'b': null });
+    const [loading, setLoading] = useState(false);
     const [dialog, setDialog] = useState(false);
 
     useEffect(() => {
@@ -45,6 +46,7 @@ function App() {
 
     const join = async () => {
         try {
+            setLoading(true);
             const tx = await (await cubiet)['produce'](
                 await address,
                 selected.a,
@@ -56,9 +58,11 @@ function App() {
             setSelected({ a: null, b: null });
             setRefresh(1);
             setDialog(false);
+            setLoading(false);
         } catch (e) {
             console.log(e);
             alert(e);
+            setLoading(false);
         }
     };
 
@@ -109,6 +113,7 @@ function App() {
                         variant="contained"
                         color={selected.a === key ? "success" : "primary"}
                         onClick={() => setSelected({ a: selected.a === key ? null : key })}
+                        loading={loading}
                         fullWidth>
                         Use as a
                     </Button>
@@ -116,6 +121,7 @@ function App() {
                         variant="contained"
                         color={selected.b === key ? "success" : "primary"}
                         onClick={() => setSelected({ b: selected.b === key ? null : key })}
+                        loading={loading}
                         fullWidth>
                         Use as b
                     </Button>
@@ -147,8 +153,8 @@ function App() {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setDialog(false)}>Do nothing</Button>
-                    <Button onClick={() => join()} autoFocus>Combine</Button>
+                    <Button onClick={() => setDialog(false)} loading={loading}>Do nothing</Button>
+                    <Button onClick={() => join()} autoFocus loading={loading}>Combine</Button>
                 </DialogActions>
             </Dialog>
         </>

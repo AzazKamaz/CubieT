@@ -1,6 +1,6 @@
 import { useEffect, useReducer, useState } from 'react';
 
-import Button from '@mui/material/Button';
+import Button from '@mui/lab/LoadingButton';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -17,6 +17,7 @@ function App() {
     const [mintlist, setMintlist] = useState({});
     const [mintable, setMintable] = useReducer((state, patch) => ({ ...state, ...patch }), {});
     const [metadata, setMetadata] = useReducer((state, patch) => ({ ...state, ...patch }), {});
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         (async () => {
@@ -42,6 +43,7 @@ function App() {
     const mint = async (key) => {
         const data = mintlist[key];
         try {
+            setLoading(true);
             console.log(Buffer.from(data.cube, 'base64'))
             const tx = await (await cubiet)['mint'](
                 await address,
@@ -53,9 +55,11 @@ function App() {
             const res = await tx.wait();
             console.log(res);
             setMintable({ [key]: false });
+            setLoading(false);
         } catch (e) {
             console.log(e);
             alert(e);
+            setLoading(false);
         }
     };
 
@@ -87,6 +91,7 @@ function App() {
                         variant="contained"
                         disabled={!mintable[key]}
                         onClick={() => mint(key)}
+                        loading={loading && mintable[key]}
                         fullWidth>
                         Mint
                     </Button>
