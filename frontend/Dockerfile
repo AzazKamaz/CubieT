@@ -9,4 +9,6 @@ RUN npm clean-install
 
 COPY --chown=node:node . ./
 
-CMD [ "npm", "start" ]
+RUN npm run build
+
+CMD [ "npm", "run", "serve" ]
