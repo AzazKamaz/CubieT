@@ -74,7 +74,10 @@ class Cube:
         return Cube(0, 0, fc.to_cubie_cube())
     
     async def solve(self) -> str:
-        facelets = self.to_facelets()
+        inv = CubieCube()
+        self.cube.inv_cubie_cube(inv)
+        facelets = inv.to_facelet_cube().to_string()
+
         reader, writer = await asyncio.open_connection(config.SOLVER_HOST, 8080)
         writer.writelines([facelets.encode(), b"\n"])
         writer.write_eof()
